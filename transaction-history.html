@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transaction History</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    :root { --bg:#0a0e1a; --surface:rgba(18,22,36,0.8); --text:#f0f3fa; --primary:#00f260; --border:rgba(255,255,255,0.08); }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; padding-bottom:80px; }
+    .screen { max-width:480px; margin:0 auto; }
+    .header { display:flex; justify-content:space-between; align-items:center; padding:18px 20px; }
+    .back-btn { background:none; border:none; font-size:24px; color:var(--primary); cursor:pointer; }
+    .txn-item { display:flex; justify-content:space-between; padding:16px; border-bottom:1px solid var(--border); }
+    .bottom-nav { position:fixed; bottom:0; max-width:480px; width:100%; background:var(--surface); backdrop-filter:blur(8px); border-top:1px solid var(--border); display:flex; justify-content:space-around; padding:10px 20px 22px; left:50%; transform:translateX(-50%); }
+    .nav-item { background:none; border:none; display:flex; flex-direction:column; align-items:center; gap:4px; font-size:12px; color:var(--text-dim); cursor:pointer; }
+    .download-btn { background:var(--primary); border:none; padding:8px 16px; border-radius:40px; color:black; font-weight:bold; cursor:pointer; display:flex; align-items:center; gap:8px; }
+  </style>
+</head>
+<body>
+<div class="screen">
+  <div class="header">
+    <button class="back-btn" onclick="location.href='index.html'"><i class="fas fa-arrow-left"></i></button>
+    <h1>Transaction History</h1>
+    <button class="download-btn" id="downloadPDF"><i class="fas fa-download"></i> Download</button>
+  </div>
+  <div id="txnList"></div>
+  <div class="bottom-nav">...</div>
+</div>
+<script>
+  // Generate 50 transactions
+  let transactions = [];
+  for (let i = 1; i <= 50; i++) {
+    const date = new Date(Date.now() - i * 86400000).toISOString().split('T')[0];
+    transactions.push({
+      date: date,
+      description: i % 3 === 0 ? 'Airtime purchase' : (i % 2 === 0 ? 'Transfer to John Doe' : 'Bill payment'),
+      amount: (Math.random() * 50000).toFixed(2),
+      type: i % 4 === 0 ? 'credit' : 'debit'
+    });
+  }
+  function render() {
+    const container = document.getElementById('txnList');
+    container.innerHTML = transactions.map(t => `
+      <div class="txn-item">
+        <div><div>${t.date}</div><div>${t.description}</div></div>
+        <div style="color:${t.type === 'credit' ? 'var(--primary)' : 'var(--error)'}">${t.type === 'credit' ? '+' : '-'}₦${parseFloat(t.amount).toLocaleString()}</div>
+      </div>
+    `).join('');
+  }
+  render();
+  document.getElementById('downloadPDF').addEventListener('click', () => {
+    const element = document.getElementById('txnList');
+    html2pdf().from(element).save('transaction_history.pdf');
+  });
+  document.querySelectorAll('.nav-item').forEach(btn => btn.addEventListener('click', () => location.href = `${btn.dataset.nav}.html`));
+</script>
+</body>
+</html>

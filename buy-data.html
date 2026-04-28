@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buy Data</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    :root { --bg:#0a0e1a; --surface:rgba(18,22,36,0.8); --text:#f0f3fa; --primary:#00f260; --border:rgba(255,255,255,0.08); --error:#ff3b7b; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; padding-bottom:80px; }
+    .screen { max-width:480px; margin:0 auto; }
+    .header { display:flex; justify-content:space-between; padding:18px 20px; }
+    .back-btn { background:none; border:none; font-size:24px; color:var(--primary); cursor:pointer; }
+    .card { background: var(--surface); border-radius:28px; padding:22px; margin:0 20px 20px; border:1px solid var(--border); }
+    .input-group { display:flex; align-items:center; gap:10px; background:var(--surface); border:1px solid var(--border); border-radius:60px; padding:12px 18px; margin-bottom:16px; }
+    .input-group input { flex:1; background:none; border:none; color:var(--text); font-size:16px; outline:none; }
+    .dropdown, .telco-select { background:var(--surface); border:1px solid var(--border); border-radius:60px; padding:12px 18px; width:100%; margin-bottom:16px; color:var(--text); }
+    .telco-row { display:flex; align-items:center; gap:12px; margin-bottom:16px; flex-wrap:wrap; }
+    .telco-option { display:flex; align-items:center; gap:8px; background:var(--surface); border:1px solid var(--border); border-radius:60px; padding:8px 16px; cursor:pointer; }
+    .telco-option.selected { border-color:var(--primary); background:rgba(0,242,96,0.2); }
+    .telco-logo { width:32px; height:32px; object-fit:contain; border-radius:50%; }
+    button { background: var(--primary); border:none; width:100%; padding:14px; border-radius:60px; font-weight:bold; cursor:pointer; margin-top:8px; }
+    .bottom-nav { position:fixed; bottom:0; max-width:480px; width:100%; background:var(--surface); backdrop-filter:blur(8px); border-top:1px solid var(--border); display:flex; justify-content:space-around; padding:10px 20px 22px; left:50%; transform:translateX(-50%); }
+    .nav-item { background:none; border:none; display:flex; flex-direction:column; align-items:center; gap:4px; font-size:12px; color:var(--text-dim); cursor:pointer; }
+    .error-msg { color: var(--error); font-size: 13px; margin-top: 8px; text-align: center; }
+  </style>
+</head>
+<body>
+<div class="screen">
+  <div class="header">
+    <button class="back-btn" onclick="location.href='index.html'"><i class="fas fa-arrow-left"></i></button>
+    <h1>Buy Data</h1>
+    <div style="width:32px;"></div>
+  </div>
+  <div class="card">
+    <!-- Telco Selection -->
+    <div class="telco-row" id="telcoOptions">
+      <div class="telco-option" data-telco="MTN"><img class="telco-logo" src="IMAGES/MTN.jpeg" alt="MTN" onerror="this.style.display='none'"> MTN</div>
+      <div class="telco-option" data-telco="T2"><img class="telco-logo" src="IMAGES/T2mobile.jpeg" alt="T2" onerror="this.style.display='none'"> T2 Mobile</div>
+      <div class="telco-option" data-telco="Airtel"><img class="telco-logo" src="IMAGES/Airtel.jpeg" alt="Airtel" onerror="this.style.display='none'"> Airtel</div>
+      <div class="telco-option" data-telco="Glo"><img class="telco-logo" src="IMAGES/Glo.jpeg" alt="Glo" onerror="this.style.display='none'"> Glo</div>
+    </div>
+
+    <!-- Phone Input -->
+    <div class="input-group"><i class="fas fa-phone"></i><input type="tel" id="phoneNumber" placeholder="Phone number (e.g., 08012345678)"></div>
+
+    <!-- Data Plan Dropdown -->
+    <select id="dataPlan" class="dropdown">
+      <option value="500">500MB - ₦500</option>
+      <option value="1000">1GB - ₦1000</option>
+      <option value="2000">2GB - ₦2000</option>
+      <option value="5000">5GB - ₦5000</option>
+      <option value="10000">10GB - ₦10000</option>
+    </select>
+
+    <!-- Account Selection -->
+    <select id="fromAccount" class="dropdown">
+      <option value="0715522980|₦ 2,485,700.50">Current Account - 0715522980 (₦ 2,485,700.50)</option>
+      <option value="0715522981|₦ 150,000.00">Savings Account - 0715522981 (₦ 150,000.00)</option>
+    </select>
+
+    <!-- Display Amount -->
+    <div class="input-group"><span>₦</span><input type="number" id="amountInput" placeholder="Amount" value="1000" readonly></div>
+
+    <div id="errorDisplay" class="error-msg"></div>
+    <button id="buyBtn">Buy Data</button>
+  </div>
+  <div class="bottom-nav">...</div>
+</div>
+<script>
+  let selectedTelco = null;
+  const dataPlanSelect = document.getElementById('dataPlan');
+  const amountInput = document.getElementById('amountInput');
+
+  // Update amount when plan changes
+  dataPlanSelect.addEventListener('change', () => amountInput.value = dataPlanSelect.value);
+
+  // Telco selection logic
+  const telcoOptions = document.querySelectorAll('.telco-option');
+  telcoOptions.forEach(opt => {
+    opt.addEventListener('click', () => {
+      telcoOptions.forEach(o => o.classList.remove('selected'));
+      opt.classList.add('selected');
+      selectedTelco = opt.dataset.telco;
+    });
+  });
+
+  // Helper function to validate Nigerian phone number
+  function isValidPhone(number) {
+    const phoneRegex = /^(07|08|09)\d{9}$/;
+    return phoneRegex.test(number);
+  }
+
+  document.getElementById('buyBtn').addEventListener('click', () => {
+    const errorDiv = document.getElementById('errorDisplay');
+    errorDiv.innerText = ''; // Clear previous errors
+
+    // 1. Check Telco Selection
+    if (!selectedTelco) {
+      errorDiv.innerText = '❌ Please select a network provider (MTN, T2, Airtel, or Glo).';
+      return;
+    }
+
+    // 2. Validate Phone Number
+    let phone = document.getElementById('phoneNumber').value.trim();
+    if (!phone) {
+      errorDiv.innerText = '❌ Please enter a phone number.';
+      return;
+    }
+    if (!isValidPhone(phone)) {
+      errorDiv.innerText = '❌ Invalid phone number. Must be 11 digits starting with 07, 08, or 09 (e.g., 08012345678).';
+      return;
+    }
+
+    // 3. Get Amount
+    let amount = parseFloat(amountInput.value);
+    if (isNaN(amount) || amount <= 0) {
+      errorDiv.innerText = '❌ Please select a valid data plan.';
+      return;
+    }
+
+    // Save transaction and proceed
+    sessionStorage.setItem('pendingTransaction', JSON.stringify({
+      type: 'data',
+      receiver: phone,
+      telco: selectedTelco,
+      amount: amount,
+      dataPlan: dataPlanSelect.options[dataPlanSelect.selectedIndex].text,
+      fromAccount: document.getElementById('fromAccount').value
+    }));
+    location.href = 'pin-entry.html';
+  });
+</script>
+</body>
+</html>

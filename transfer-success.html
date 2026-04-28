@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transfer Success</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    :root { --bg:#0a0e1a; --surface:rgba(18,22,36,0.8); --text:#f0f3fa; --primary:#00f260; --border:rgba(255,255,255,0.08); }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; padding:20px; }
+    .container { max-width:480px; margin:0 auto; }
+    .card { background: var(--surface); border-radius:28px; padding:22px; margin-bottom:20px; border:1px solid var(--border); }
+    .receipt { background: white; color: black; padding:20px; border-radius:16px; margin-bottom:20px; font-family: monospace; }
+    .btn-group { display:flex; gap:12px; margin-top:20px; flex-wrap:wrap; }
+    button { background: var(--primary); border:none; padding:12px 20px; border-radius:60px; font-weight:bold; cursor:pointer; flex:1; }
+    .back-btn { background:none; border:none; font-size:24px; color:var(--primary); cursor:pointer; margin-bottom:20px; }
+    .sound-icon { background: none; border: none; font-size: 24px; color: var(--primary); cursor: pointer; margin-left: 10px; }
+  </style>
+</head>
+<body>
+<button class="back-btn" onclick="location.href='index.html'"><i class="fas fa-arrow-left"></i> Home</button>
+<div class="container">
+  <div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <h2>✅ Transfer Successful!</h2>
+      <button id="replaySoundBtn" class="sound-icon" title="Play success sound again"><i class="fas fa-music"></i></button>
+    </div>
+    <div id="receipt" class="receipt">
+      <h3>GTCO Bank Receipt</h3>
+      <p><strong>Transaction ID:</strong> GTCO-<span id="txnId"></span></p>
+      <p><strong>Date:</strong> <span id="date"></span></p>
+      <p><strong>From:</strong> <span id="fromAccount"></span></p>
+      <p><strong>To:</strong> <span id="toName"></span> (<span id="toAccount"></span>)</p>
+      <p><strong>Amount:</strong> ₦<span id="amount"></span></p>
+      <p><strong>Remark:</strong> <span id="remark"></span></p>
+      <p><strong>Status:</strong> Completed</p>
+    </div>
+    <div class="btn-group">
+      <button id="printBtn">🖨️ Print</button>
+      <button id="pdfBtn">📄 PDF</button>
+      <button id="imageBtn">🖼️ Image</button>
+    </div>
+  </div>
+</div>
+<script>
+  // --- Play success sound (Web Audio) ---
+  function playSuccessSound() {
+    try {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      const ctx = new AudioContext();
+      const now = ctx.currentTime;
+      const osc1 = ctx.createOscillator();
+      const osc2 = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc1.connect(gain);
+      osc2.connect(gain);
+      gain.connect(ctx.destination);
+      // Melody: two rising notes
+      osc1.frequency.value = 659.25; // E5
+      osc2.frequency.value = 783.99; // G5
+      gain.gain.value = 0.2;
+      osc1.start();
+      osc2.start();
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 1);
+      osc1.stop(now + 0.6);
+      osc2.stop(now + 0.8);
+    } catch(e) { console.log('Audio not supported'); }
+  }
+  // Try to play automatically (may be blocked by browser)
+  window.addEventListener('load', () => {
+    playSuccessSound();
+  });
+  // Replay on button click
+  document.getElementById('replaySoundBtn').addEventListener('click', () => {
+    playSuccessSound();
+  });
+  // --- Receipt data (unchanged) ---
+  const data = JSON.parse(sessionStorage.getItem('pendingTransfer')) || 
+               JSON.parse(sessionStorage.getItem('pendingTransaction')) || 
+               { beneficiaryName: 'Victor', amount: 1000, fromAccount: '0715522980', remark: 'Data purchase' };
+  document.getElementById('txnId').innerText = Math.floor(Math.random() * 1000000);
+  document.getElementById('date').innerText = new Date().toLocaleString();
+  document.getElementById('fromAccount').innerText = data.fromAccount || '0715522980';
+  document.getElementById('toName').innerText = data.beneficiaryName || data.receiver || 'Victor';
+  document.getElementById('toAccount').innerText = data.beneficiaryAccount || 'N/A';
+  document.getElementById('amount').innerText = data.amount;
+  document.getElementById('remark').innerText = data.remark || 'N/A';
+  // --- Receipt actions ---
+  document.getElementById('printBtn').onclick = () => window.print();
+  document.getElementById('pdfBtn').onclick = () => {
+    html2pdf().from(document.getElementById('receipt')).save('receipt.pdf');
+  };
+  document.getElementById('imageBtn').onclick = () => {
+    html2canvas(document.getElementById('receipt')).then(canvas => {
+      const link = document.createElement('a');
+      link.download = 'receipt.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    });
+  };
+</script>
+</body>
+</html>

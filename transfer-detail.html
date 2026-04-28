@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Transfer Details</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    :root { --bg:#0a0e1a; --surface:rgba(18,22,36,0.8); --text:#f0f3fa; --primary:#00f260; --border:rgba(255,255,255,0.08); }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; padding-bottom:80px; }
+    .screen { max-width:480px; margin:0 auto; }
+    .header { display:flex; justify-content:space-between; padding:18px 20px; }
+    .back-btn { background:none; border:none; font-size:24px; color:var(--primary); cursor:pointer; }
+    .card, .beneficiary-card { background: var(--surface); border-radius:28px; padding:22px; margin:0 20px 20px; border:1px solid var(--border); }
+    .input-group { display:flex; align-items:center; gap:10px; background:var(--surface); border:1px solid var(--border); border-radius:60px; padding:12px 18px; margin-bottom:16px; }
+    .input-group input { flex:1; background:none; border:none; color:var(--text); font-size:18px; outline:none; }
+    .dropdown { background:var(--surface); border:1px solid var(--border); border-radius:60px; padding:12px 18px; width:100%; margin-bottom:16px; color:var(--text); }
+    button { background: var(--primary); border:none; width:100%; padding:14px; border-radius:60px; font-weight:bold; cursor:pointer; }
+    .bottom-nav { position:fixed; bottom:0; max-width:480px; width:100%; background:var(--surface); backdrop-filter:blur(8px); border-top:1px solid var(--border); display:flex; justify-content:space-around; padding:10px 20px 22px; left:50%; transform:translateX(-50%); }
+    .nav-item { background:none; border:none; display:flex; flex-direction:column; align-items:center; gap:4px; font-size:12px; color:var(--text-dim); cursor:pointer; }
+  </style>
+</head>
+<body>
+<div class="screen">
+  <div class="header">
+    <button class="back-btn" onclick="location.href='transfer.html'"><i class="fas fa-arrow-left"></i></button>
+    <h1>Transfer</h1>
+    <div style="width:32px;"></div>
+  </div>
+  <div class="beneficiary-card" id="beneficiaryCard"></div>
+  <div class="card">
+    <select id="fromAccount" class="dropdown">
+      <option value="0715522980|₦ 2,485,700.50">Current Account - 0715522980 (₦ 2,485,700.50)</option>
+      <option value="0715522981|₦ 150,000.00">Savings Account - 0715522981 (₦ 150,000.00)</option>
+      <option value="0715522982|$ 1,200.00">Dollar Account - 0715522982 ($ 1,200.00)</option>
+      <option value="0715522983|₦ 3,245,890.00">Investment Account - 0715522983 (₦ 3,245,890.00)</option>
+      <option value="0715522984|₦ 500,000.00">Business Account - 0715522984 (₦ 500,000.00)</option>
+    </select>
+    <div class="input-group"><span>₦</span><input type="number" id="amountInput" placeholder="0.00" value="0.00" step="100" min="0"></div>
+    <div class="input-group"><input type="text" id="remarkInput" placeholder="Remark (optional)"></div>
+    <button id="sendBtn">Send</button>
+  </div>
+  <div class="bottom-nav">...</div>
+</div>
+<script>
+  let beneficiary = JSON.parse(sessionStorage.getItem('transferBeneficiary')) || { name: 'Abiona Oluwatobi Esther', account: '0336009769', bank: 'Gtbank', currency: 'NGN' };
+  document.getElementById('beneficiaryCard').innerHTML = `<div><strong>${beneficiary.name}</strong><br>${beneficiary.bank} • ${beneficiary.account} • ${beneficiary.currency}</div>`;
+  document.getElementById('sendBtn').addEventListener('click', () => {
+    let amount = parseFloat(document.getElementById('amountInput').value);
+    if (isNaN(amount) || amount <= 0) { alert('Enter a valid amount'); return; }
+    sessionStorage.setItem('pendingTransfer', JSON.stringify({
+      beneficiaryName: beneficiary.name,
+      beneficiaryAccount: beneficiary.account,
+      beneficiaryBank: beneficiary.bank,
+      amount: amount,
+      remark: document.getElementById('remarkInput').value,
+      fromAccount: document.getElementById('fromAccount').value
+    }));
+    location.href = 'pin-entry.html';
+  });
+</script>
+</body>
+</html>

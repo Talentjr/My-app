@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loans</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    :root { --bg:#0a0e1a; --surface:rgba(18,22,36,0.8); --text:#f0f3fa; --primary:#00f260; --border:rgba(255,255,255,0.08); }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; padding-bottom:80px; }
+    .screen { max-width:480px; margin:0 auto; }
+    .header { display:flex; justify-content:space-between; padding:18px 20px; }
+    .back-btn { background:none; border:none; font-size:24px; color:var(--primary); cursor:pointer; }
+    .card, .repay-card, .loan-product, .cta { background: var(--surface); border-radius:28px; padding:22px; margin:0 18px 20px; border:1px solid var(--border); }
+    .repay-card { background: linear-gradient(135deg, #00f260, #0aa84d); color:black; }
+    .progress-bar { background:rgba(255,255,255,0.2); height:8px; border-radius:10px; margin:12px 0; }
+    .progress-fill { background:var(--primary); width:60%; height:8px; border-radius:10px; }
+    .cta { cursor:pointer; text-align:center; border:1.5px dashed var(--primary); }
+    .bottom-nav { position:fixed; bottom:0; max-width:480px; width:100%; background:var(--surface); backdrop-filter:blur(8px); border-top:1px solid var(--border); display:flex; justify-content:space-around; padding:10px 20px 22px; left:50%; transform:translateX(-50%); }
+    .nav-item { background:none; border:none; display:flex; flex-direction:column; align-items:center; gap:4px; font-size:12px; color:var(--text-dim); cursor:pointer; }
+  </style>
+</head>
+<body>
+<div class="screen">
+  <div class="header">
+    <button class="back-btn" onclick="location.href='index.html'"><i class="fas fa-arrow-left"></i></button>
+    <h1>Loans</h1>
+    <div style="width:32px;"></div>
+  </div>
+  <div class="repay-card">
+    <div>Left to repay this month</div>
+    <div style="font-size:28px; font-weight:800;">₦ 125,000.00</div>
+    <div>Due by 30 April 2026</div>
+  </div>
+  <div class="loan-product">
+    <div style="font-weight:700;">Quick Credit</div>
+    <div style="display:flex; justify-content:space-between; margin:12px 0;"><span>Loan balance</span><span>₦ 250,000.00</span></div>
+    <div class="progress-bar"><div class="progress-fill"></div></div>
+    <div style="display:flex; justify-content:space-between; font-size:12px;"><span>₦ 150,000 repaid</span><span>₦ 100,000 left</span></div>
+  </div>
+  <div class="cta" id="quickLoanCta"><i class="fas fa-plus-circle"></i> Need a quick loan?</div>
+  <div class="bottom-nav">
+    <button class="nav-item" data-nav="home"><i class="fas fa-home"></i><span>Home</span></button>
+    <button class="nav-item active" data-nav="products"><i class="fas fa-boxes"></i><span>Products</span></button>
+    <button class="nav-item" data-nav="payments"><i class="fas fa-receipt"></i><span>Payments</span></button>
+    <button class="nav-item" data-nav="transfers"><i class="fas fa-arrow-right-arrow-left"></i><span>Transfers</span></button>
+    <button class="nav-item" data-nav="finances"><i class="fas fa-chart-pie"></i><span>Finances</span></button>
+  </div>
+</div>
+<script>
+  document.getElementById('quickLoanCta').addEventListener('click', () => {
+    location.href = 'quick-credit.html';
+  });
+  document.querySelectorAll('.nav-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const nav = btn.dataset.nav;
+      if (nav === 'home') location.href = 'index.html';
+      else if (nav === 'products') location.href = 'products.html';
+      else if (nav === 'payments') location.href = 'payments.html';
+      else if (nav === 'transfers') location.href = 'transfer.html';
+      else if (nav === 'finances') location.href = 'finances.html';
+    });
+  });
+</script>
+</body>
+</html>

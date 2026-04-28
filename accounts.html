@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Accounts</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    :root { --bg:#0a0e1a; --surface:rgba(18,22,36,0.8); --text:#f0f3fa; --primary:#00f260; --border:rgba(255,255,255,0.08); }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; padding-bottom:80px; }
+    .screen { max-width:480px; margin:0 auto; }
+    .header { display:flex; align-items:center; gap:16px; padding:18px 20px; }
+    .back-btn { background:none; border:none; font-size:24px; color:var(--primary); cursor:pointer; }
+    .account-list { margin:0 16px; }
+    .account-item { background: var(--surface); border-radius:28px; padding:20px; margin-bottom:16px; border:1px solid var(--border); display:flex; align-items:center; gap:16px; cursor:pointer; transition:0.2s; }
+    .account-item:active { transform:scale(0.98); }
+    .icon-bg { width:60px; height:60px; background:rgba(0,242,96,0.2); border-radius:60px; display:flex; align-items:center; justify-content:center; font-size:28px; color:var(--primary); }
+    .details { flex:1; }
+    .account-name { font-weight:700; margin-bottom:4px; }
+    .account-number { font-size:13px; color:var(--text-dim); margin-bottom:4px; }
+    .balance { font-weight:700; color:var(--primary); }
+    .bottom-nav { position:fixed; bottom:0; max-width:480px; width:100%; background:var(--surface); backdrop-filter:blur(8px); border-top:1px solid var(--border); display:flex; justify-content:space-around; padding:10px 20px 22px; left:50%; transform:translateX(-50%); }
+    .nav-item { background:none; border:none; display:flex; flex-direction:column; align-items:center; gap:4px; font-size:12px; color:var(--text-dim); cursor:pointer; }
+    .nav-item.active { color:var(--primary); }
+  </style>
+</head>
+<body>
+<div class="screen">
+  <div class="header">
+    <button class="back-btn" onclick="location.href='index.html'"><i class="fas fa-arrow-left"></i></button>
+    <h1>My Accounts</h1>
+  </div>
+  <div class="account-list" id="accountsContainer"></div>
+  <div class="bottom-nav">
+    <button class="nav-item" data-nav="home"><i class="fas fa-home"></i><span>Home</span></button>
+    <button class="nav-item" data-nav="products"><i class="fas fa-boxes"></i><span>Products</span></button>
+    <button class="nav-item" data-nav="payments"><i class="fas fa-receipt"></i><span>Payments</span></button>
+    <button class="nav-item" data-nav="transfers"><i class="fas fa-arrow-right-arrow-left"></i><span>Transfers</span></button>
+    <button class="nav-item" data-nav="finances"><i class="fas fa-chart-pie"></i><span>Finances</span></button>
+  </div>
+</div>
+<script>
+  const accounts = [
+    { name: "Current Account", number: "0715522980", balance: "₦ 2,485,700.50", icon: "fas fa-building" },
+    { name: "Savings Account", number: "0715522981", balance: "₦ 150,000.00", icon: "fas fa-piggy-bank" },
+    { name: "Dollar Account", number: "0715522982", balance: "$ 1,200.00", icon: "fas fa-dollar-sign" },
+    { name: "Investment Account", number: "0715522983", balance: "₦ 3,245,890.00", icon: "fas fa-chart-line" },
+    { name: "Business Account", number: "0715522984", balance: "₦ 500,000.00", icon: "fas fa-briefcase" }
+  ];
+  const container = document.getElementById('accountsContainer');
+  container.innerHTML = accounts.map(acc => `
+    <div class="account-item" data-number="${acc.number}" data-name="${acc.name}" data-balance="${acc.balance}">
+      <div class="icon-bg"><i class="${acc.icon}"></i></div>
+      <div class="details">
+        <div class="account-name">${acc.name}</div>
+        <div class="account-number">${acc.number}</div>
+        <div class="balance">${acc.balance}</div>
+      </div>
+    </div>
+  `).join('');
+  document.querySelectorAll('.account-item').forEach(el => {
+    el.addEventListener('click', () => {
+      // Optional: select account and go back to home (or show toast)
+      alert(`Selected account: ${el.dataset.name}\n${el.dataset.number}\n${el.dataset.balance}`);
+    });
+  });
+  document.querySelectorAll('.nav-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const nav = btn.dataset.nav;
+      if (nav === 'home') location.href = 'index.html';
+      else if (nav === 'products') location.href = 'products.html';
+      else if (nav === 'payments') location.href = 'payments.html';
+      else if (nav === 'transfers') location.href = 'transfer.html';
+      else if (nav === 'finances') location.href = 'finances.html';
+    });
+  });
+</script>
+</body>
+</html>

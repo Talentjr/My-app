@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payments</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    :root { --bg:#0a0e1a; --surface:rgba(18,22,36,0.8); --text:#f0f3fa; --primary:#00f260; --border:rgba(255,255,255,0.08); }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; padding-bottom:80px; }
+    .screen { max-width:480px; margin:0 auto; }
+    .header { display:flex; justify-content:space-between; padding:18px 20px; }
+    .back-btn { background:none; border:none; font-size:24px; color:var(--primary); cursor:pointer; }
+    .card { background: var(--surface); border-radius:28px; padding:16px; margin:0 18px 20px; border:1px solid var(--border); }
+    .category-item { display:flex; align-items:center; gap:16px; padding:14px 0; border-bottom:1px solid var(--border); cursor:pointer; }
+    .bottom-nav { position:fixed; bottom:0; max-width:480px; width:100%; background:var(--surface); backdrop-filter:blur(8px); border-top:1px solid var(--border); display:flex; justify-content:space-around; padding:10px 20px 22px; left:50%; transform:translateX(-50%); }
+    .nav-item { background:none; border:none; display:flex; flex-direction:column; align-items:center; gap:4px; font-size:12px; color:var(--text-dim); cursor:pointer; }
+  </style>
+</head>
+<body>
+<div class="screen">
+  <div class="header">
+    <button class="back-btn" onclick="location.href='index.html'"><i class="fas fa-arrow-left"></i></button>
+    <h1>Payments</h1>
+    <div style="width:32px;"></div>
+  </div>
+  <div class="card">
+    <div>Top used</div>
+    <div class="category-item" id="buyDataBtn"><i class="fas fa-wifi"></i> Buy data <span style="margin-left:auto;">₦1,000 <i class="fas fa-chevron-right"></i></span></div>
+    <div class="category-item" id="buyAirtimeBtn"><i class="fas fa-phone-alt"></i> Buy airtime <span style="margin-left:auto;"><i class="fas fa-chevron-right"></i></span></div>
+    <div class="category-item" id="dstvBtn"><i class="fas fa-tv"></i> DSTV Subscription <span style="margin-left:auto;">₦3,900 <i class="fas fa-chevron-right"></i></span></div>
+  </div>
+  <div class="card">
+    <div>All billers (20)</div>
+    <!-- List of billers with their redirect URLs -->
+    <div class="category-item" data-url="https://www.ie-payments.com/">⚡ Electricity (Ikeja Electric)</div>
+    <div class="category-item" data-url="https://selfcare.spectranet.com.ng/payment">🌐 Internet (Spectranet)</div>
+    <div class="category-item" data-url="https://www.axamansard.com/health/plans-details">🛡️ Insurance (AXA Mansard)</div>
+    <div class="category-item" data-url="https://lagoswater.org/?page_id=513">💧 Lagos Water Corporation</div>
+    <div class="category-item" data-url="https://www.gotvafrica.com/en-ng/get/packages/">📺 GOtv Subscription</div>
+    <div class="category-item" data-url="https://m.startimestv.com/">📡 StarTimes</div>
+    <div class="category-item" data-url="https://lasu.edu.ng/epayment/">🎓 School Fees (LASU)</div>
+    <div class="category-item" data-url="https://etax.lirs.net">🏛️ Lagos State Tax</div>
+    <div class="category-item" data-url="https://ibank.fmbn.gov.ng">🏠 Mortgage (FMBN)</div>
+    <div class="category-item" data-url="https://www.nhia.gov.ng">🏥 Health Insurance (NHIS)</div>
+    <div class="category-item" data-url="#">💸 Loan Repayment</div>
+    <div class="category-item" data-url="#">📈 Investment Top-up</div>
+    <div class="category-item" data-url="#">🤝 Charity Donation</div>
+    <div class="category-item" data-url="#">🎮 Gaming (Xbox/PS)</div>
+    <div class="category-item" data-url="#">🎬 Streaming (Netflix)</div>
+    <div class="category-item" data-url="#">🏋️ Gym Membership</div>
+    <div class="category-item" data-url="#">☁️ Cloud Storage</div>
+    <div class="category-item" data-url="#">💻 Software License</div>
+    <div class="category-item" data-url="#">🚚 Freight Payment</div>
+  </div>
+  <div class="bottom-nav">...</div>
+</div>
+<script>
+  // Top used buttons
+  document.getElementById('buyDataBtn').onclick = () => location.href = 'buy-data.html';
+  document.getElementById('buyAirtimeBtn').onclick = () => location.href = 'buy-airtime.html';
+  document.getElementById('dstvBtn').onclick = () => window.open('https://www.dstv.com/en-ng/buy/dstv-packages/', '_blank');
+
+  // Iterate through all billers and add click handlers
+  const billers = document.querySelectorAll('.category-item[data-url]');
+  billers.forEach(biller => {
+    biller.onclick = () => {
+      const url = biller.dataset.url;
+      if (url && url !== '#') {
+        window.open(url, '_blank');
+      } else {
+        alert('This payment service is currently under development.');
+      }
+    };
+  });
+</script>
+</body>
+</html>

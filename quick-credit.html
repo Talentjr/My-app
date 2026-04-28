@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <title>GTCO · Quick Credit</title>
+  <link rel="stylesheet" href="quick-credit.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="loan-app-screen">
+  <div class="header">
+    <button class="back-btn" id="backBtn"><i class="fas fa-arrow-left"></i></button>
+    <h1>QuickCredit</h1>
+    <div style="width: 32px;"></div>
+  </div>
+
+  <div class="content">
+    <p class="description">Salary earners can get cash instantly and pay back in up to 12 months.</p>
+
+    <div class="loan-card">
+      <div class="loan-amount-section">
+        <label>Loan amount</label>
+        <div class="amount-input-group">
+          <span class="currency">₦</span>
+          <input type="number" id="loanAmount" value="1000000" step="1000" min="5000" max="5000000">
+        </div>
+        <input type="range" id="amountSlider" min="5000" max="5000000" step="1000" value="1000000" class="slider">
+        <div class="amount-limits">
+          <span>₦5,000</span>
+          <span>₦5,000,000</span>
+        </div>
+      </div>
+
+      <div class="loan-period-section">
+        <label>Loan period</label>
+        <div class="period-value">12 months</div>
+      </div>
+
+      <div class="repayment-details">
+        <div class="detail-row">
+          <span>Monthly repayment</span>
+          <span id="monthlyRepayment">₦0</span>
+        </div>
+        <div class="detail-row">
+          <span>Interest rate (per month)</span>
+          <span>2.95%</span>
+        </div>
+        <div class="detail-row">
+          <span>Total repayment</span>
+          <span id="totalRepayment">₦0</span>
+        </div>
+      </div>
+
+      <div class="insurance-fee-note">
+        You will be charged a 1% insurance fee.
+      </div>
+
+      <div class="terms">
+        <input type="checkbox" id="termsCheckbox">
+        <label for="termsCheckbox">I agree with <a href="#" id="termsLink">QuickCredit Terms and Conditions</a>.</label>
+      </div>
+
+      <button class="proceed-btn" id="proceedBtn">Proceed</button>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <button class="nav-item" data-nav="home"><i class="fas fa-home"></i><span>Home</span></button>
+    <button class="nav-item" data-nav="products"><i class="fas fa-boxes"></i><span>Products</span></button>
+    <button class="nav-item" data-nav="payments"><i class="fas fa-receipt"></i><span>Payments</span></button>
+    <button class="nav-item" data-nav="transfers"><i class="fas fa-arrow-right-arrow-left"></i><span>Transfers</span></button>
+    <button class="nav-item" data-nav="finances"><i class="fas fa-chart-pie"></i><span>Finances</span></button>
+  </div>
+</div>
+<script src="quick-credit.js"></script>
+</body>
+</html>

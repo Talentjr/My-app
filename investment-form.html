@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invest</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .form-card { max-width: 480px; margin: 0 auto; padding: 20px; }
+    select, input { width: 100%; padding: 14px; margin: 8px 0 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 60px; color: var(--text); }
+    .fee-breakdown { background: var(--surface); border-radius: 24px; padding: 16px; margin: 20px 0; }
+    button { background: var(--primary); width: 100%; padding: 14px; border-radius: 60px; border: none; font-weight: bold; }
+  </style>
+</head>
+<body>
+<div class="form-card">
+  <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+    <button class="back-btn" onclick="window.location.href='investments.html'"><i class="fas fa-arrow-left"></i></button>
+    <h1>New Investment</h1>
+    <div style="width:32px;"></div>
+  </div>
+  <select id="fund">
+    <option value="GT Money Market Fund">GT Money Market Fund</option>
+    <option value="GT Dollar Fund">GT Dollar Fund</option>
+    <option value="GT Equity Income Fund">GT Equity Income Fund</option>
+    <option value="GT Balanced Fund">GT Balanced Fund</option>
+  </select>
+  <input type="number" id="amount" placeholder="Amount (min ₦100)">
+  <div class="fee-breakdown">
+    <div>Management fee: 1.5%</div>
+    <div>Insurance fee: 0.5%</div>
+    <div id="totalDisplay">Total payable: ₦0</div>
+  </div>
+  <button id="investBtn">Invest Now</button>
+</div>
+<script src="backend-mock.js"></script>
+<script src="global.js"></script>
+<script>
+  const amountInput = document.getElementById('amount');
+  const totalSpan = document.getElementById('totalDisplay');
+  function updateTotal() {
+    let amt = parseFloat(amountInput.value) || 0;
+    let fee = amt * 0.02;
+    let total = amt + fee;
+    totalSpan.innerText = `Total payable: ₦${total.toLocaleString()}`;
+  }
+  amountInput.addEventListener('input', updateTotal);
+  document.getElementById('investBtn').addEventListener('click', () => {
+    let amount = parseFloat(amountInput.value);
+    let fund = document.getElementById('fund').value;
+    if (amount < 100) { showToast('Minimum ₦100', true); return; }
+    showToast('Processing investment...');
+    setTimeout(() => {
+      Backend.addInvestment({ fund, amount, date: new Date().toISOString() });
+      Backend.updateBalance(-amount);
+      playSound('success');
+      vibrate(50);
+      showToast(`₦${amount.toLocaleString()} invested in ${fund}`);
+      setTimeout(() => window.location.href = 'investments.html', 2000);
+    }, 2000);
+  });
+  function showToast(msg, isErr) {
+    let t = document.querySelector('.toast-message');
+    if(t) t.remove();
+    let toast = document.createElement('div');
+    toast.className = 'toast-message';
+    toast.innerText = msg;
+    if(isErr) toast.style.background = 'var(--error)';
+    document.body.appendChild(toast);
+    setTimeout(()=>toast.remove(), 3000);
+  }
+</script>
+</body>
+</html>

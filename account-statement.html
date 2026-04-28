@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html><head><meta name="viewport" content="width=device-width, initial-scale=1"><title>Account Statement</title><link rel="stylesheet" href="global.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"><script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script><style>.filter-bar { padding: 16px; display: flex; gap: 12px; } input { background: var(--surface); border: 1px solid var(--border); padding: 8px; border-radius: 20px; color: var(--text); } .stmt-item { padding: 12px 16px; border-bottom: 1px solid var(--border); }</style></head>
+<body><div style="max-width:480px; margin:0 auto;"><div class="header" style="display:flex; justify-content:space-between; padding:18px;"><button class="back-btn" onclick="history.back()"><i class="fas fa-arrow-left"></i></button><h1>Account Statement</h1><button id="pdfStmt"><i class="fas fa-download"></i></button></div><div class="filter-bar"><input type="date" id="fromDate"><input type="date" id="toDate"><button id="filterBtn" style="background:var(--primary); border:none; border-radius:40px; padding:0 16px;">Apply</button></div><div id="stmtContainer">Loading...</div><div class="bottom-nav">...</div></div><script src="backend-mock.js"></script><script src="global.js"></script><script>
+  let allTx = [];
+  function renderFiltered() {
+    let from = document.getElementById('fromDate').value;
+    let to = document.getElementById('toDate').value;
+    let filtered = allTx.filter(tx => (!from || tx.date >= from) && (!to || tx.date <= to));
+    document.getElementById('stmtContainer').innerHTML = filtered.map(tx => `<div class="stmt-item"><div>${tx.date}</div><div>${tx.description}</div><div>${tx.type === 'debit' ? '-' : '+'}₦${parseFloat(tx.amount).toLocaleString()}</div></div>`).join('');
+  }
+  function load() { allTx = Backend.getTransactions(); renderFiltered(); }
+  load();
+  document.getElementById('filterBtn').addEventListener('click', renderFiltered);
+  document.getElementById('pdfStmt').addEventListener('click', () => { html2pdf().from(document.getElementById('stmtContainer')).save('statement.pdf'); playSound('success'); });
+</script></body></html>

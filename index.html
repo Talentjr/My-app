@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>GTCO · Home</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --bg:#0a0e1a; --surface:rgba(18,22,36,0.8); --text:#f0f3fa; --text-dim:#a0a8c0;
+      --primary:#00f260; --error:#ff3b7b; --border:rgba(255,255,255,0.08);
+    }
+    body.light {
+      --bg:#f4f7fc; --surface:rgba(255,255,255,0.8); --text:#1f2f3a;
+      --text-dim:#6c828e; --border:rgba(0,0,0,0.05);
+    }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; padding-bottom:80px; }
+    .screen { max-width:480px; margin:0 auto; }
+    .header { display:flex; justify-content:space-between; align-items:center; padding:18px 20px; }
+    .balance-card, .shortcuts, .trans-invest { background: var(--surface); border-radius:28px; padding:18px 20px; margin-bottom:20px; border:1px solid var(--border); }
+    .balance-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+    .toggle-visibility { cursor:pointer; color:var(--primary); margin-left: 8px; }
+    .action-buttons { display:flex; gap:16px; margin-top:16px; }
+    .action-item { flex:1; text-align:center; background:none; border:none; color:var(--primary); cursor:pointer; }
+    .shortcut-grid { display:flex; gap:12px; }
+    .shortcut-item { flex:1; text-align:center; background:var(--surface); padding:10px 0; border-radius:20px; cursor:pointer; }
+    .dropdown { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:8px; width:auto; color:var(--text); }
+    .bottom-nav { position:fixed; bottom:0; max-width:480px; width:100%; background:var(--surface); backdrop-filter:blur(8px); border-top:1px solid var(--border); display:flex; justify-content:space-around; padding:10px 20px 22px; left:50%; transform:translateX(-50%); z-index:100; }
+    .nav-item { background:none; border:none; display:flex; flex-direction:column; align-items:center; gap:4px; font-size:12px; color:var(--text-dim); cursor:pointer; }
+    .nav-item.active { color:var(--primary); }
+    .toast-message { position:fixed; bottom:85px; left:50%; transform:translateX(-50%); background:var(--surface); padding:8px 18px; border-radius:40px; z-index:200; }
+  </style>
+</head>
+<body>
+<div class="screen">
+  <div class="header">
+    <div class="hello-text" id="helloInvestor" style="cursor:pointer;"><h1 id="greetingName">Hello, Investor!</h1><p>Welcome back</p></div>
+    <div class="avatar" style="background:var(--surface); width:48px; height:48px; border-radius:60px; display:flex; align-items:center; justify-content:center;"><i class="fas fa-user-astronaut"></i></div>
+  </div>
+
+  <div class="balance-card">
+    <div class="balance-row">
+      <select id="accountDropdown" class="dropdown">
+        <option value="0715522980|₦ 2,485,700.50">Current Account - 0715522980</option>
+        <option value="0715522981|₦ 150,000.00">Savings Account - 0715522981</option>
+        <option value="0715522982|$ 1,200.00">Dollar Account - 0715522982</option>
+        <option value="0715522983|₦ 3,245,890.00">Investment Account - 0715522983</option>
+        <option value="0715522984|₦ 500,000.00">Business Account - 0715522984</option>
+      </select>
+      <i class="fas fa-eye toggle-visibility" id="toggleBalance"></i>
+    </div>
+    <div class="balance-row"><span>Account Number</span><span id="accountNumber">0715522980</span></div>
+    <div class="balance-row"><span>Book balance</span><span id="balanceAmount">₦ 2,485,700.50</span></div>
+    <div class="action-buttons">
+      <button class="action-item" id="fundAccountBtn"><i class="fas fa-arrow-down"></i><span>Fund account</span></button>
+      <button class="action-item" id="transferBtn"><i class="fas fa-exchange-alt"></i><span>Transfer</span></button>
+      <button class="action-item" id="accountBtn"><i class="fas fa-credit-card"></i><span>Accounts</span></button>
+    </div>
+  </div>
+
+  <div class="shortcuts">
+    <div>Shortcuts</div>
+    <div class="shortcut-grid">
+      <div class="shortcut-item" data-action="nearme"><i class="fas fa-map-marker-alt"></i><span>Near me</span></div>
+      <div class="shortcut-item" data-action="data"><i class="fas fa-wifi"></i><span>Buy data</span></div>
+      <div class="shortcut-item" data-action="airtime"><i class="fas fa-phone-alt"></i><span>Buy airtime</span></div>
+      <div class="shortcut-item" data-action="fx"><i class="fas fa-chart-line"></i><span>FX Sales</span></div>
+    </div>
+  </div>
+
+  <div class="trans-invest">
+    <div style="display:flex; justify-content:space-between;"><span>Transaction history</span><span id="seeMoreTxn" style="color:var(--primary); cursor:pointer;">See more</span></div>
+    <div id="recentTxn">Loading...</div>
+  </div>
+
+  <div class="bottom-nav">
+    <button class="nav-item active" data-nav="home"><i class="fas fa-home"></i><span>Home</span></button>
+    <button class="nav-item" data-nav="products"><i class="fas fa-boxes"></i><span>Products</span></button>
+    <button class="nav-item" data-nav="payments"><i class="fas fa-receipt"></i><span>Payments</span></button>
+    <button class="nav-item" data-nav="transfers"><i class="fas fa-arrow-right-arrow-left"></i><span>Transfers</span></button>
+    <button class="nav-item" data-nav="finances"><i class="fas fa-chart-pie"></i><span>Finances</span></button>
+  </div>
+</div>
+<script>
+  // Load profile name
+  let profile = JSON.parse(localStorage.getItem('profile')) || { name: 'Investor' };
+  document.getElementById('greetingName').innerText = `Hello, ${profile.name}!`;
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'profile') {
+      let newProfile = JSON.parse(e.newValue);
+      document.getElementById('greetingName').innerText = `Hello, ${newProfile.name}!`;
+    }
+  });
+
+  // Account dropdown and visibility toggle
+  const accountDropdown = document.getElementById('accountDropdown');
+  const accountNumberSpan = document.getElementById('accountNumber');
+  const balanceSpan = document.getElementById('balanceAmount');
+  let balanceVisible = true;
+
+  function updateAccountDetails() {
+    const selectedValue = accountDropdown.value;
+    const [accountNumber, balance] = selectedValue.split('|');
+    if (balanceVisible) {
+      accountNumberSpan.innerText = accountNumber;
+      balanceSpan.innerText = balance;
+    } else {
+      accountNumberSpan.innerText = '••••••••';
+      balanceSpan.innerText = '••••••••';
+    }
+  }
+
+  accountDropdown.addEventListener('change', updateAccountDetails);
+  updateAccountDetails();
+
+  const toggleBtn = document.getElementById('toggleBalance');
+  toggleBtn.addEventListener('click', () => {
+    balanceVisible = !balanceVisible;
+    if (balanceVisible) {
+      const selectedValue = accountDropdown.value;
+      const [accountNumber, balance] = selectedValue.split('|');
+      accountNumberSpan.innerText = accountNumber;
+      balanceSpan.innerText = balance;
+      toggleBtn.className = 'fas fa-eye toggle-visibility';
+    } else {
+      accountNumberSpan.innerText = '••••••••';
+      balanceSpan.innerText = '••••••••';
+      toggleBtn.className = 'fas fa-eye-slash toggle-visibility';
+    }
+  });
+
+  // Recent transactions (mock)
+  const recent = [{ desc: 'Transfer to John', amount: '-₦ 5,000' }, { desc: 'Airtime purchase', amount: '-₦ 500' }];
+  document.getElementById('recentTxn').innerHTML = recent.map(t => `<div style="display:flex; justify-content:space-between; padding:8px 0;">${t.desc}<span>${t.amount}</span></div>`).join('');
+
+  // Navigation
+  document.getElementById('seeMoreTxn').onclick = () => location.href = 'transaction-history.html';
+  document.getElementById('transferBtn').onclick = () => location.href = 'transfer.html';
+  document.getElementById('fundAccountBtn').onclick = () => location.href = 'finances.html';
+  document.getElementById('accountBtn').onclick = () => location.href = 'accounts.html';
+
+  document.querySelectorAll('.shortcut-item').forEach(el => {
+    el.onclick = () => {
+      const action = el.dataset.action;
+      if (action === 'nearme') location.href = 'near-me.html';
+      else if (action === 'data') location.href = 'buy-data.html';
+      else if (action === 'airtime') location.href = 'buy-airtime.html';
+      else if (action === 'fx') location.href = 'fx-sales.html';
+    };
+  });
+
+  document.querySelectorAll('.nav-item').forEach(btn => {
+    btn.onclick = () => {
+      const nav = btn.dataset.nav;
+      if (nav === 'home') location.href = 'index.html';
+      else if (nav === 'products') location.href = 'products.html';
+      else if (nav === 'payments') location.href = 'payments.html';
+      else if (nav === 'transfers') location.href = 'transfer.html';
+      else if (nav === 'finances') location.href = 'finances.html';
+    };
+  });
+
+  document.getElementById('helloInvestor').onclick = () => location.href = 'profile.html';
+</script>
+</body>
+</html>

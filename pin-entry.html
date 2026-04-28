@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enter PIN</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    :root { --bg:#0a0e1a; --surface:rgba(18,22,36,0.8); --text:#f0f3fa; --primary:#00f260; --border:rgba(255,255,255,0.08); }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; height:100vh; display:flex; align-items:center; justify-content:center; }
+    .pin-card { background: var(--surface); border-radius:28px; padding:32px; width:320px; text-align:center; border:1px solid var(--border); }
+    .pin-dots { display:flex; justify-content:center; gap:16px; margin:24px 0; }
+    .dot { width:16px; height:16px; background:var(--text-dim); border-radius:50%; }
+    .dot.filled { background:var(--primary); }
+    .keypad { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:24px 0; }
+    .key { background:var(--surface); border:1px solid var(--border); padding:16px; border-radius:40px; font-size:24px; cursor:pointer; }
+    .back-btn { background:none; border:none; font-size:24px; color:var(--primary); position:absolute; top:20px; left:20px; cursor:pointer; }
+  </style>
+</head>
+<body>
+<button class="back-btn" onclick="window.history.back()"><i class="fas fa-arrow-left"></i></button>
+<div class="pin-card">
+  <h2>Enter PIN</h2>
+  <p>Enter your 4-digit transaction PIN</p>
+  <div class="pin-dots" id="pinDots"></div>
+  <div class="keypad" id="keypad"></div>
+  <p class="error" id="errorMsg" style="color:var(--error); margin-top:16px;"></p>
+</div>
+<script>
+  let enteredPin = '';
+  const correctPin = '1234';
+  function createDots() {
+    const container = document.getElementById('pinDots');
+    container.innerHTML = '';
+    for (let i = 0; i < 4; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'dot';
+      container.appendChild(dot);
+    }
+  }
+  function updateDots() {
+    const dots = document.querySelectorAll('.dot');
+    dots.forEach((dot, i) => {
+      if (i < enteredPin.length) dot.classList.add('filled');
+      else dot.classList.remove('filled');
+    });
+  }
+  function showError(msg) {
+    document.getElementById('errorMsg').innerText = msg;
+    setTimeout(() => document.getElementById('errorMsg').innerText = '', 2000);
+  }
+  function handleDigit(digit) {
+    if (enteredPin.length < 4) {
+      enteredPin += digit;
+      updateDots();
+      if (enteredPin.length === 4) {
+        if (enteredPin === correctPin) {
+          // Simulate processing
+          document.getElementById('errorMsg').innerText = 'Processing...';
+          setTimeout(() => {
+            location.href = 'transfer-success.html';
+          }, 1500);
+        } else {
+          showError('Incorrect PIN. Please try again.');
+          enteredPin = '';
+          updateDots();
+        }
+      }
+    }
+  }
+  function deleteLast() {
+    enteredPin = enteredPin.slice(0, -1);
+    updateDots();
+  }
+  createDots();
+  const keypad = document.getElementById('keypad');
+  for (let i = 1; i <= 9; i++) {
+    const btn = document.createElement('div');
+    btn.className = 'key';
+    btn.innerText = i;
+    btn.onclick = () => handleDigit(i.toString());
+    keypad.appendChild(btn);
+  }
+  const zeroBtn = document.createElement('div');
+  zeroBtn.className = 'key';
+  zeroBtn.innerText = '0';
+  zeroBtn.onclick = () => handleDigit('0');
+  keypad.appendChild(zeroBtn);
+  const delBtn = document.createElement('div');
+  delBtn.className = 'key';
+  delBtn.innerHTML = '<i class="fas fa-backspace"></i>';
+  delBtn.onclick = deleteLast;
+  keypad.appendChild(delBtn);
+</script>
+</body>
+</html>

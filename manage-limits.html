@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Limits</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin:0; padding:0; box-sizing: border-box; }
+    :root { --bg:#0a0e1a; --surface:rgba(18,22,36,0.8); --text:#f0f3fa; --text-dim:#a0a8c0; --primary:#00f260; --error:#ff3b7b; --border:rgba(255,255,255,0.08); }
+    body.light { --bg:#f4f7fc; --surface:rgba(255,255,255,0.8); --text:#1f2f3a; --text-dim:#6c828e; --border:rgba(0,0,0,0.05); }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; padding-bottom:80px; }
+    .screen { max-width:480px; margin:0 auto; }
+    .header { display:flex; justify-content:space-between; padding:18px 20px; align-items:center; }
+    .back-btn { background:none; border:none; font-size:24px; color:var(--primary); cursor:pointer; }
+    .card { background: var(--surface); border-radius:28px; padding:22px; margin:16px 20px; border:1px solid var(--border); }
+    .limit-row { display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border); }
+    .input-group { display:flex; align-items:center; gap:10px; margin:20px 0; background:var(--surface); border:1px solid var(--border); border-radius:60px; padding:12px 18px; }
+    .input-group input { flex:1; background:none; border:none; color:var(--text); font-size:18px; outline:none; }
+    .note { background: rgba(255,59,123,0.1); border-radius:20px; padding:12px; margin:20px 0; font-size:13px; color:var(--error); display:flex; gap:10px; align-items:center; }
+    .terms { display:flex; align-items:center; gap:12px; margin:20px 0; }
+    button { background: var(--primary); border:none; width:100%; padding:14px; border-radius:60px; font-weight:bold; cursor:pointer; }
+    .bottom-nav { position:fixed; bottom:0; max-width:480px; width:100%; background:var(--surface); backdrop-filter:blur(8px); border-top:1px solid var(--border); display:flex; justify-content:space-around; padding:10px 20px 22px; left:50%; transform:translateX(-50%); z-index:100; }
+    .nav-item { background:none; border:none; display:flex; flex-direction:column; align-items:center; gap:4px; font-size:12px; color:var(--text-dim); cursor:pointer; }
+    .nav-item i { font-size:22px; }
+  </style>
+</head>
+<body>
+<div class="screen">
+  <div class="header">
+    <button class="back-btn" onclick="window.location.href='index.html'"><i class="fas fa-arrow-left"></i></button>
+    <h1>Online limit</h1>
+    <div style="width:32px;"></div>
+  </div>
+  <div class="card">
+    <div class="limit-row"><span>Current limit</span><span id="currentLimit">₦12,000,000</span></div>
+    <div class="limit-row"><span>Allowed limit</span><span>₦100,000,000</span></div>
+    <div class="input-group"><span>₦</span><input type="number" id="newLimit" value="12000000" step="100000" min="0" max="100000000"></div>
+    <div class="note"><i class="fas fa-info-circle"></i><span>Maximum NIP transfer limit is ₦25,000,000</span></div>
+    <div class="terms"><input type="checkbox" id="termsCheckbox"><label>I agree with <a href="#" id="termsLink">Terms and Conditions</a></label></div>
+    <button id="setLimitBtn">Set limit</button>
+  </div>
+  <div class="bottom-nav">
+    <button class="nav-item" data-nav="home"><i class="fas fa-home"></i><span>Home</span></button>
+    <button class="nav-item" data-nav="products"><i class="fas fa-boxes"></i><span>Products</span></button>
+    <button class="nav-item" data-nav="payments"><i class="fas fa-receipt"></i><span>Payments</span></button>
+    <button class="nav-item" data-nav="transfers"><i class="fas fa-arrow-right-arrow-left"></i><span>Transfers</span></button>
+    <button class="nav-item" data-nav="finances"><i class="fas fa-chart-pie"></i><span>Finances</span></button>
+  </div>
+</div>
+<script>
+  let currentLimit = 12000000;
+  const allowedLimit = 100000000;
+  function showToast(msg, isError) {
+    let t = document.querySelector('.toast-message');
+    if(t) t.remove();
+    let toast = document.createElement('div');
+    toast.className = 'toast-message';
+    toast.innerText = msg;
+    toast.style.cssText = 'position:fixed; bottom:85px; left:50%; transform:translateX(-50%); background: var(--surface); color: var(--text); padding:8px 18px; border-radius:40px; z-index:200;';
+    if(isError) toast.style.background = 'var(--error)';
+    document.body.appendChild(toast);
+    setTimeout(()=>toast.remove(),3000);
+  }
+  document.getElementById('setLimitBtn').addEventListener('click', () => {
+    if(!document.getElementById('termsCheckbox').checked) { showToast('Please agree to Terms', true); return; }
+    let newVal = parseFloat(document.getElementById('newLimit').value);
+    if(isNaN(newVal) || newVal > allowedLimit) { showToast('Limit exceeds allowed maximum', true); return; }
+    document.getElementById('setLimitBtn').disabled = true;
+    document.getElementById('setLimitBtn').innerText = 'Processing...';
+    setTimeout(() => {
+      currentLimit = newVal;
+      document.getElementById('currentLimit').innerHTML = `₦${currentLimit.toLocaleString()}`;
+      showToast('Limit updated successfully', false);
+      document.getElementById('setLimitBtn').disabled = false;
+      document.getElementById('setLimitBtn').innerText = 'Set limit';
+    }, 2000);
+  });
+  document.getElementById('termsLink').addEventListener('click', (e) => { e.preventDefault(); showToast('Terms demo', false); });
+  document.querySelectorAll('.nav-item').forEach(btn=>btn.addEventListener('click',()=>{ let nav=btn.dataset.nav; if(nav==='home') location.href='index.html'; else if(nav==='products') location.href='products.html'; else if(nav==='payments') location.href='payments.html'; else if(nav==='transfers') location.href='transfer.html'; else if(nav==='finances') location.href='finances.html'; }));
+</script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Investments</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    :root { --bg:#0a0e1a; --surface:rgba(18,22,36,0.8); --text:#f0f3fa; --text-dim:#a0a8c0; --primary:#00f260; --border:rgba(255,255,255,0.08); }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; padding-bottom:80px; }
+    .screen { max-width:480px; margin:0 auto; }
+    .header { display:flex; justify-content:space-between; padding:18px 20px; align-items:center; }
+    .back-btn { background:none; border:none; font-size:24px; color:var(--primary); cursor:pointer; }
+    .card { background: var(--surface); border-radius:28px; padding:20px; margin:0 18px 20px; }
+    .balance { font-size:28px; font-weight:800; margin:8px 0; }
+    .tabs { display:flex; gap:12px; margin:16px 0; }
+    .tab { background:rgba(255,255,255,0.1); padding:8px 18px; border-radius:40px; cursor:pointer; }
+    .tab.active { background:var(--primary); color:black; }
+    .fund-item { display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border); }
+    .bottom-nav { position:fixed; bottom:0; max-width:480px; width:100%; background:var(--surface); backdrop-filter:blur(8px); border-top:1px solid var(--border); display:flex; justify-content:space-around; padding:10px 20px 22px; left:50%; transform:translateX(-50%); z-index:100; }
+    .nav-item { background:none; border:none; display:flex; flex-direction:column; align-items:center; gap:4px; font-size:12px; color:var(--text-dim); cursor:pointer; }
+  </style>
+</head>
+<body>
+<div class="screen">
+  <div class="header">
+    <button class="back-btn" onclick="window.location.href='index.html'"><i class="fas fa-arrow-left"></i></button>
+    <h1>Investments</h1>
+    <div style="width:32px;"></div>
+  </div>
+  <div class="card">
+    <div>Portfolio balance</div>
+    <div class="balance" id="balanceAmount">₦ 2,556.00</div>
+    <div class="tabs">
+      <div class="tab active" id="nairaTab">Naira</div>
+      <div class="tab" id="dollarTab">US Dollar</div>
+    </div>
+    <div class="fund-item"><span>GT Money Market Fund</span><span>63.45%</span></div>
+    <div class="fund-item"><span>GT Dollar Fund</span><span>28.55%</span></div>
+    <div class="fund-item"><span>GT Equity Income Fund</span><span>7.97%</span></div>
+    <div class="fund-item"><span>GT Balanced Fund</span><span>0.03%</span></div>
+  </div>
+  <div class="bottom-nav">...</div>
+</div>
+<script>
+  document.getElementById('nairaTab').addEventListener('click',()=>{ document.getElementById('balanceAmount').innerText='₦ 2,556.00'; document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); document.getElementById('nairaTab').classList.add('active'); });
+  document.getElementById('dollarTab').addEventListener('click',()=>{ document.getElementById('balanceAmount').innerText='$ 125.00'; document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); document.getElementById('dollarTab').classList.add('active'); });
+  document.querySelectorAll('.nav-item').forEach(btn=>btn.addEventListener('click',()=>{ let nav=btn.dataset.nav; if(nav==='home') location.href='index.html'; else if(nav==='products') location.href='products.html'; else if(nav==='payments') location.href='payments.html'; else if(nav==='transfers') location.href='transfer.html'; else if(nav==='finances') location.href='finances.html'; }));
+</script>
+</body>
+</html>
